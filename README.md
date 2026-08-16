@@ -1,6 +1,6 @@
 # User Management System REST API
 
-A Spring Boot RESTful backend application that handles user onboarding with dependent cascading dropdowns (Country < State< City), automated temporary credential generation via SMTP email, first-time login password resets, user authentication, and third-party dashboard quote integration.
+A Spring Boot RESTful backend application that handles user onboarding with dependent cascading dropdowns (Country < State < City), automated temporary credential generation via SMTP email, first-time login password resets, user authentication, third-party dashboard quote integration, and performance benchmarking using Apache JMeter.
 
 ---
 
@@ -16,6 +16,7 @@ A Spring Boot RESTful backend application that handles user onboarding with depe
 * **Authentication**: Login endpoint validating credentials and returning user profile details.
 * **Third-Party API Integration**: Fetches random motivational quotes from `https://dummyjson.com/quotes/random` for the user dashboard.
 * **Interactive API Docs**: Built-in Swagger UI & OpenAPI 3 for testing.
+* **Performance & Load Benchmarking**: Tested with Apache JMeter to analyze response times, throughput, and error rates under concurrent load.
 
 ---
 
@@ -27,32 +28,32 @@ A Spring Boot RESTful backend application that handles user onboarding with depe
 * **Documentation**: SpringDoc OpenAPI (Swagger UI)
 * **Build Tool**: Maven
 * **Utilities**: Project Lombok
+* **Testing & Performance**: Apache JMeter (Load & Stress Testing)
 
 ---
 
 ## 🗄️ Database Design
 
 ```text
-+------------------+         +------------------+         +------------------+
-|  COUNTRY_MASTER  |         |   STATE_MASTER   |         |   CITY_MASTER    |
-+------------------+         +------------------+         +------------------+
-| COUNTRY_ID (PK)  |<---+    | STATE_ID (PK)    |<---+    | CITY_ID (PK)     |
-| COUNTRY_NAME     |    +----| COUNTRY_ID (FK)  |    +----| STATE_ID (FK)    |
-+------------------+         | STATE_NAME       |         | CITY_NAME        |
-                             +------------------+         +------------------+
-                                      ^                            ^
-                                      |                            |
-                             +--------+----------------------------+
-                             |
-+----------------------------+---------------------+
-|                     USER_MASTER                  |
++------------------+          +------------------+          +------------------+
+|  COUNTRY_MASTER  |          |   STATE_MASTER   |          |   CITY_MASTER    |
++------------------+          +------------------+          +------------------+
+| COUNTRY_ID (PK)  |<---+     | STATE_ID (PK)    |<---+     | CITY_ID (PK)     |
+| COUNTRY_NAME     |    +-----| COUNTRY_ID (FK)  |    +-----| STATE_ID (FK)    |
++------------------+          | STATE_NAME       |          | CITY_NAME        |
+                              +------------------+          +------------------+
+                                       ^                             ^
+                                       |                             |
+                              +--------+-----------------------------+
+                              |
++-----------------------------+--------------------+
+|                   USER_MASTER                    |
 +--------------------------------------------------+
 | USER_ID (PK, AUTO_INCREMENT)                     |
 | UNAME, EMAIL, PWD, PWD_UPDATED, PHNO             |
 | COUNTRY_ID (FK), STATE_ID (FK), CITY_ID (FK)     |
 | CREATED_AT, UPDATED_AT                           |
 +--------------------------------------------------+
-
 🚀 Setup & Execution
 1. Database Configuration
 Create the database and configure src/main/resources/application.properties:
@@ -234,3 +235,13 @@ JSON
     "author": "Zig Ziglar"
   }
 }
+⚡ Performance & Load Testing (Apache JMeter)
+To evaluate system stability, throughput, and latency under concurrent traffic, performance tests were executed using Apache JMeter:
+
+Load & Concurrency Testing: Simulated multiple concurrent virtual users hitting the /login, /unique/{email}, and cascading dropdown endpoints (/countries, /states/{id}, /cities/{id}).
+
+Throughput & Latency Benchmarking: Analyzed response times (min, max, average, and 95th percentile) and transaction rates (requests per second).
+
+Bottleneck & Error Rate Detection: Evaluated application behavior, database connection pooling, and SMTP latency under heavy registration traffic.
+
+Test Plan Artifacts: Configured Thread Groups, HTTP Request Defaults, CSV Data Set Configs (for parameterized login/registration testing), and Summary Report Listeners.
